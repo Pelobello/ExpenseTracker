@@ -20,14 +20,14 @@ public class PanelAction extends javax.swing.JPanel {
         initComponents();
     }
 public void initEvent(TableActionEvent event, int row){
-    cmdEdit.addActionListener(new ActionListener(){
-        @Override
-        public void actionPerformed(ActionEvent e) {
-         event.onEdit(row);
-        }
-        
-        
-    });
+//    cmdEdit.addActionListener(new ActionListener(){
+//        @Override
+//        public void actionPerformed(ActionEvent e) {
+//         event.onEdit(row);
+//        }
+//        
+//        
+//    });
        cmdDelete.addActionListener(new ActionListener(){
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -55,16 +55,8 @@ public void initEvent(TableActionEvent event, int row){
     private void initComponents() {
 
         actionButton1 = new Dazzle.cell.ActionButton();
-        cmdEdit = new Dazzle.cell.ActionButton();
         cmdView = new Dazzle.cell.ActionButton();
         cmdDelete = new Dazzle.cell.ActionButton();
-
-        cmdEdit.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Dazzle/cell/icons8_pen_20px_1.png"))); // NOI18N
-        cmdEdit.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cmdEditActionPerformed(evt);
-            }
-        });
 
         cmdView.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Dazzle/cell/icons8_eye_20px_1.png"))); // NOI18N
 
@@ -81,8 +73,6 @@ public void initEvent(TableActionEvent event, int row){
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(0, 0, Short.MAX_VALUE)
-                .addComponent(cmdEdit, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE)
                 .addComponent(cmdView, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, Short.MAX_VALUE)
                 .addComponent(cmdDelete, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -92,16 +82,11 @@ public void initEvent(TableActionEvent event, int row){
             .addGroup(layout.createSequentialGroup()
                 .addGap(0, 0, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(cmdEdit, javax.swing.GroupLayout.DEFAULT_SIZE, 39, Short.MAX_VALUE)
-                    .addComponent(cmdView, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(cmdView, javax.swing.GroupLayout.DEFAULT_SIZE, 39, Short.MAX_VALUE)
                     .addComponent(cmdDelete, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(0, 0, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
-
-    private void cmdEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdEditActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_cmdEditActionPerformed
    
     private void cmdDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdDeleteActionPerformed
   
@@ -111,7 +96,6 @@ public void initEvent(TableActionEvent event, int row){
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private Dazzle.cell.ActionButton actionButton1;
     private Dazzle.cell.ActionButton cmdDelete;
-    private Dazzle.cell.ActionButton cmdEdit;
     private Dazzle.cell.ActionButton cmdView;
     // End of variables declaration//GEN-END:variables
 }

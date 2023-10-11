@@ -22,8 +22,6 @@
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
-              <Component id="cmdEdit" min="-2" pref="37" max="-2" attributes="0"/>
-              <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
               <Component id="cmdView" min="-2" pref="41" max="-2" attributes="0"/>
               <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
               <Component id="cmdDelete" min="-2" pref="39" max="-2" attributes="0"/>
@@ -35,8 +33,7 @@
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
               <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                  <Component id="cmdEdit" pref="39" max="32767" attributes="0"/>
-                  <Component id="cmdView" max="32767" attributes="0"/>
+                  <Component id="cmdView" pref="39" max="32767" attributes="0"/>
                   <Component id="cmdDelete" max="32767" attributes="0"/>
               </Group>
               <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
@@ -45,16 +42,6 @@
     </DimensionLayout>
   </Layout>
   <SubComponents>
-    <Component class="Dazzle.cell.ActionButton" name="cmdEdit">
-      <Properties>
-        <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-          <Image iconType="3" name="/Dazzle/cell/icons8_pen_20px_1.png"/>
-        </Property>
-      </Properties>
-      <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cmdEditActionPerformed"/>
-      </Events>
-    </Component>
     <Component class="Dazzle.cell.ActionButton" name="cmdView">
       <Properties>
         <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">

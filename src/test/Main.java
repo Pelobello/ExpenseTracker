@@ -18,85 +18,168 @@ import javax.swing.table.TableRowSorter;
 
 
 public class Main extends javax.swing.JFrame {
-    
-   
- 
+    public double totalAmount =0.0;
     public Main() {
        
         initComponents();
-        
-         
 
-   
         PrintStream printStream = new PrintStream(new TextAreaOutputStream(textArea));
         System.setOut(printStream);
-        
-        
+
          Date currentDate = new Date();
         datechooser.setDate(currentDate);
         TableActionEvent event = new TableActionEvent() {
-            @Override
-            public void onEdit(int row) {
-                System.out.println("Select row: "+ row);
-            }
+            
+//            @Override
+//            public void onEdit(int row) {
+//             System.out.println("Select row: " + row);
+////            SimpleDateFormat sdate = new SimpleDateFormat("MMMM dd, yyyy");
+////            String date3 = sdate.format(datechooser.getDate());
+////
+////    
+////    String date2 = sdate.format(datechooser.getDate());
+////    String titleText = title.getText().trim();
+////    String amountText = amount.getText().trim();
+////    String statusText = status.getText().trim();
+////
+////    DefaultTableModel model1 = (DefaultTableModel) table.getModel();
+////    String amountT = (String)table.getValueAt(row, 1);
+////    
+////             
+////     
+////
+////    if (titleText.equals("") || amountText.equals("") || date3.isEmpty()) {
+////        // Handle the case when any of the fields are empty
+////    } else {
+////        int rowIndex = table.getSelectedRow();
+////        
+////        if (rowIndex != -1) {
+////            String oldTitle = (String) table.getValueAt(rowIndex, 0);
+////
+////            
+////            Node nodeToUpdate = list.search(oldTitle);
+////
+////            if (nodeToUpdate != null) {
+////               
+////                Record record = nodeToUpdate.data;
+////
+////             
+////                record.setTitle(titleText);
+////              
+////                record.setDate(date2);
+////                record.setStatus(statusText);
+////
+////             
+////                table.setValueAt(titleText, rowIndex, 0);
+////                table.setValueAt(amountText, rowIndex, 1);
+////                table.setValueAt(date2, rowIndex, 2);
+////                table.setValueAt(statusText, rowIndex, 3);
+////                    
+////          
+////                    double oldAmountValue = Double.parseDouble(amountT);
+////                    double newAmountValue = Double.parseDouble(amountText);
+////  
+////                        totalAmount=totalAmount+newAmountValue-oldAmountValue;
+////       
+////   
+////                Total.setText(Double.toString(totalAmount));
+////
+////                System.out.println("Updated Data: Title: " + titleText + ", Amount: " + amountText + ", Date: " + date2 + ", Status: " + statusText);
+////            } else {
+////                System.out.println("Data not found for updating: " + oldTitle);
+////            }
+////        }
+////
+////        title.setText("Title");
+////        amount.setText("0.0");
+////    }
+//    
+//            }
 
             @Override
-            public void onDelete(int row) {
-                if (table.isEditing()) {
-                    table.getCellEditor().stopCellEditing();
-                }
-                 DefaultTableModel model = (DefaultTableModel)table.getModel();
-                   
+      public void onDelete(int row) {
+         if (table.isEditing()) {
+              table.getCellEditor().stopCellEditing();}
+         
+           DefaultTableModel model = (DefaultTableModel)table.getModel();
                 int selectedRow = table.getSelectedRow();
 
     if (selectedRow == -1) {
-       
+           
     } else {
         DefaultTableModel model1 = (DefaultTableModel) table.getModel();
-
 
         String titleText = model1.getValueAt(selectedRow, 0).toString().trim();
         String amountText = model1.getValueAt(selectedRow, 1).toString();
         String dateText = model1.getValueAt(selectedRow, 2).toString();
-
-        try {
-            double amountValue = Double.parseDouble(amountText);
-            totalAmount -= amountValue;
-        } catch (NumberFormatException e) {
-          
-        }
+       
         System.out.println("("+"Newly Deleted Data: "+"Title: "+titleText+", Amount: "+amountText+", Date: "+dateText+")");
         list.delete(titleText);
         list.delete(amountText);
         list.delete(dateText);
-      
-        Total.setText(Double.toString(totalAmount));
-          model.removeRow(row);   
-
-      
-    }
-          
-            }
-
-            @Override
-            public void onView(int row) {
-              System.out.println("Status: "+ row);
-               DefaultTableModel model = (DefaultTableModel) table.getModel();
-
-    
-    if (row >= 0 && row < model.getRowCount()) {
+         
         
+        if (row >= 0 && row < model.getRowCount()) {
+         
         Object currentValue = model.getValueAt(row, 3);
 
       
         if ("Paid".equals(currentValue)) {
             model.setValueAt("Unpaid", row, 3);
+             double newAmountvalue = Double.parseDouble(amountText);
+            totalAmount+=newAmountvalue;
+            
+            Total.setText(Double.toString(totalAmount));
+        } else {
+            
+            
+            Total.setText(Double.toString(totalAmount));
+        }
+     
+        if (totalAmount <0) {
+            totalAmount = 0.0;
+             Total.setText(Double.toString(totalAmount));
+        }else{
+            
+        }
+        //if paid just delete the data else totalamount - newam
+           double newam = Double.parseDouble(amountText);
+            totalAmount-=newam;
+       Total.setText(Double.toString(totalAmount));
+            }
+          model.removeRow(row);  
+            }      
+            }
+
+            @Override
+     public void onView(int row) {
+            System.out.println("Status: "+ row);
+            DefaultTableModel model = (DefaultTableModel) table.getModel();
+              
+            String amountText = (String)table.getValueAt(row, 1);   
+              if (row >= 0 && row < model.getRowCount()) {
+                Object currentValue = model.getValueAt(row, 3);
+
+        if ("Paid".equals(currentValue)) {
+            model.setValueAt("Unpaid", row, 3);
+            System.out.println("Status Change to (Unpaid)");
+            double newAmountvalue = Double.parseDouble(amountText);
+            totalAmount+=newAmountvalue;
+            Total.setText(Double.toString(totalAmount));
         } else {
             model.setValueAt("Paid", row, 3);
+            System.out.println("Status Change to (Paid)");
+            double newAmountvalue = Double.parseDouble(amountText);
+            totalAmount-=newAmountvalue;
+            Total.setText(Double.toString(totalAmount));
         }
+        
+        
         table.repaint();
-    }         
+    }    
+              
             }
+     
         };
         table.getColumnModel().getColumn(4).setCellRenderer(new TableActionCellRender());
         table.getColumnModel().getColumn(4).setCellEditor(new TableActionCellEditor(event));  
@@ -116,7 +199,19 @@ public class Main extends javax.swing.JFrame {
 
     public static class LinkedList {
         Node head;
+       public void update(String oldTitle, Record newData) {
+    Node node = head;
 
+    while (node != null) {
+        if (node.data.getTitle().equals(oldTitle)) {
+            node.data = newData;
+            return;
+        }
+        node = node.next;
+    }
+
+    System.out.println("Data not found for updating: " + oldTitle);
+}
         public void add(Record data) {
             Node node = new Node(data);
 
@@ -134,6 +229,7 @@ public class Main extends javax.swing.JFrame {
         public void delete(String searchData) {
             if (head == null ) {
                 System.out.println("Your Table is empty!");
+                
                return;
             }
             if (head.data.getTitle().equals(searchData)) {
@@ -171,6 +267,7 @@ public class Main extends javax.swing.JFrame {
             }
         }
     }
+    
 
     public static class Record {
         String title;
@@ -188,6 +285,33 @@ public class Main extends javax.swing.JFrame {
         public String getTitle() {
             return title;
         }
+        public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getAmount() {
+        return amount;
+    }
+
+    public void setAmount(String amount) {
+        this.amount = amount;
+    }
+
+//    public String getDate() {
+//        return date;
+//    }
+//
+//    public void setDate(String date) {
+//        this.date = date;
+//    }
+
+//    public String getStatus() {
+//        return status;
+//    }
+//
+//    public void setStatus(String status) {
+//        this.status = status;
+//    }
 
         @Override
         public String toString() {
@@ -201,33 +325,40 @@ public class Main extends javax.swing.JFrame {
         jPanel1 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         table = new javax.swing.JTable();
-        title = new javax.swing.JTextField();
-        amount = new javax.swing.JTextField();
-        jButton1 = new javax.swing.JButton();
-        Total = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
-        status = new javax.swing.JTextField();
-        datechooser = new com.toedter.calendar.JDateChooser();
-        jLabel2 = new javax.swing.JLabel();
         search = new javax.swing.JTextField();
         jButton2 = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
         textArea = new javax.swing.JTextArea();
+        Total = new javax.swing.JLabel();
+        jPanel2 = new javax.swing.JPanel();
+        jPanel3 = new javax.swing.JPanel();
+        title = new javax.swing.JTextField();
+        jPanel4 = new javax.swing.JPanel();
+        amount = new javax.swing.JTextField();
+        jPanel5 = new javax.swing.JPanel();
+        datechooser = new com.toedter.calendar.JDateChooser();
+        jPanel6 = new javax.swing.JPanel();
+        status = new javax.swing.JTextField();
+        jPanel7 = new javax.swing.JPanel();
+        add = new javax.swing.JButton();
+        jSeparator1 = new javax.swing.JSeparator();
         jLabel3 = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Expense Tracker");
-        setResizable(false);
 
-        jPanel1.setBackground(new java.awt.Color(68, 80, 105));
+        jPanel1.setBackground(new java.awt.Color(0, 51, 102));
 
-        table.setFont(new java.awt.Font("Tahoma", 0, 15)); // NOI18N
+        table.setFont(new java.awt.Font("Yu Gothic", 0, 18)); // NOI18N
         table.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
             new String [] {
-                "Title", "Amount", "Date", "Status", "Action"
+                "Title", "Amount", "Date", "Status", "Update Status/Delete"
             }
         ) {
             boolean[] canEdit = new boolean [] {
@@ -238,70 +369,23 @@ public class Main extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
-        table.setRowHeight(40);
+        table.setRowHeight(43);
         table.setSelectionBackground(new java.awt.Color(91, 154, 139));
-        jScrollPane1.setViewportView(table);
-
-        title.setFont(new java.awt.Font("Tahoma", 0, 15)); // NOI18N
-        title.setText("Title");
-        title.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusGained(java.awt.event.FocusEvent evt) {
-                titleFocusGained(evt);
-            }
-            public void focusLost(java.awt.event.FocusEvent evt) {
-                titleFocusLost(evt);
-            }
-        });
-        title.addMouseListener(new java.awt.event.MouseAdapter() {
+        table.setShowVerticalLines(false);
+        table.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                titleMouseClicked(evt);
-            }
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                titleMouseEntered(evt);
+                tableMouseClicked(evt);
             }
         });
+        jScrollPane1.setViewportView(table);
+        if (table.getColumnModel().getColumnCount() > 0) {
+            table.getColumnModel().getColumn(4).setMinWidth(120);
+            table.getColumnModel().getColumn(4).setMaxWidth(120);
+        }
 
-        amount.setFont(new java.awt.Font("Tahoma", 0, 15)); // NOI18N
-        amount.setText("0.0");
-        amount.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusGained(java.awt.event.FocusEvent evt) {
-                amountFocusGained(evt);
-            }
-            public void focusLost(java.awt.event.FocusEvent evt) {
-                amountFocusLost(evt);
-            }
-        });
-        amount.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyPressed(java.awt.event.KeyEvent evt) {
-                amountKeyPressed(evt);
-            }
-        });
-
-        jButton1.setFont(new java.awt.Font("Tahoma", 0, 15)); // NOI18N
-        jButton1.setText("Add");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
-            }
-        });
-
-        Total.setEditable(false);
-        Total.setFont(new java.awt.Font("Leelawadee", 0, 20)); // NOI18N
-
-        jLabel1.setFont(new java.awt.Font("Tahoma", 0, 20)); // NOI18N
-        jLabel1.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel1.setText("Total");
-
-        status.setEditable(false);
-        status.setFont(new java.awt.Font("Tahoma", 0, 15)); // NOI18N
-        status.setText("Ongoing");
-
-        datechooser.setDateFormatString("MMMM dd, yyyy");
-        datechooser.setFont(new java.awt.Font("Tahoma", 0, 15)); // NOI18N
-
-        jLabel2.setFont(new java.awt.Font("Tahoma", 0, 20)); // NOI18N
-        jLabel2.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel2.setText("Expense Tracker");
+        jLabel1.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        jLabel1.setForeground(new java.awt.Color(0, 121, 208));
+        jLabel1.setText("Total:");
 
         search.setFont(new java.awt.Font("Tahoma", 0, 15)); // NOI18N
         search.addFocusListener(new java.awt.event.FocusAdapter() {
@@ -327,92 +411,278 @@ public class Main extends javax.swing.JFrame {
 
         textArea.setEditable(false);
         textArea.setColumns(20);
-        textArea.setFont(new java.awt.Font("Monospaced", 0, 18)); // NOI18N
+        textArea.setFont(new java.awt.Font("Ebrima", 0, 18)); // NOI18N
         textArea.setRows(5);
         jScrollPane2.setViewportView(textArea);
 
-        jLabel3.setFont(new java.awt.Font("Tahoma", 0, 20)); // NOI18N
+        Total.setFont(new java.awt.Font("Courier New", 3, 18)); // NOI18N
+        Total.setForeground(new java.awt.Color(0, 121, 208));
+        Total.setText("0.0");
+
+        jPanel2.setBackground(new java.awt.Color(255, 204, 102));
+
+        jPanel3.setBackground(new java.awt.Color(255, 153, 0));
+
+        title.setFont(new java.awt.Font("Yu Gothic", 0, 18)); // NOI18N
+        title.setText("Title");
+        title.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                titleFocusGained(evt);
+            }
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                titleFocusLost(evt);
+            }
+        });
+        title.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                titleMouseClicked(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                titleMouseEntered(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(title)
+                .addContainerGap())
+        );
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                .addGap(12, 12, 12)
+                .addComponent(title, javax.swing.GroupLayout.DEFAULT_SIZE, 41, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+
+        jPanel4.setBackground(new java.awt.Color(255, 153, 0));
+
+        amount.setFont(new java.awt.Font("Yu Gothic", 0, 18)); // NOI18N
+        amount.setText("0.0");
+        amount.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                amountFocusGained(evt);
+            }
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                amountFocusLost(evt);
+            }
+        });
+        amount.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                amountKeyPressed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
+        jPanel4.setLayout(jPanel4Layout);
+        jPanel4Layout.setHorizontalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(amount)
+                .addContainerGap())
+        );
+        jPanel4Layout.setVerticalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
+                .addGap(31, 31, 31)
+                .addComponent(amount, javax.swing.GroupLayout.DEFAULT_SIZE, 41, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+
+        jPanel5.setBackground(new java.awt.Color(255, 153, 0));
+
+        datechooser.setDateFormatString("MMMM dd, yyyy");
+        datechooser.setFont(new java.awt.Font("Yu Gothic", 0, 18)); // NOI18N
+
+        javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
+        jPanel5.setLayout(jPanel5Layout);
+        jPanel5Layout.setHorizontalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel5Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(datechooser, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        jPanel5Layout.setVerticalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
+                .addGap(16, 16, 16)
+                .addComponent(datechooser, javax.swing.GroupLayout.DEFAULT_SIZE, 41, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+
+        jPanel6.setBackground(new java.awt.Color(255, 153, 0));
+
+        status.setEditable(false);
+        status.setFont(new java.awt.Font("Yu Gothic", 0, 18)); // NOI18N
+        status.setText("Ongoing");
+
+        javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
+        jPanel6.setLayout(jPanel6Layout);
+        jPanel6Layout.setHorizontalGroup(
+            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel6Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(status)
+                .addContainerGap())
+        );
+        jPanel6Layout.setVerticalGroup(
+            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel6Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(status, javax.swing.GroupLayout.DEFAULT_SIZE, 43, Short.MAX_VALUE)
+                .addGap(12, 12, 12))
+        );
+
+        jPanel7.setBackground(new java.awt.Color(255, 153, 0));
+
+        add.setFont(new java.awt.Font("Tahoma", 0, 15)); // NOI18N
+        add.setText("Add");
+        add.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel7Layout = new javax.swing.GroupLayout(jPanel7);
+        jPanel7.setLayout(jPanel7Layout);
+        jPanel7Layout.setHorizontalGroup(
+            jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel7Layout.createSequentialGroup()
+                .addGap(112, 112, 112)
+                .addComponent(add, javax.swing.GroupLayout.DEFAULT_SIZE, 91, Short.MAX_VALUE)
+                .addGap(112, 112, 112))
+        );
+        jPanel7Layout.setVerticalGroup(
+            jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel7Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(add, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(16, Short.MAX_VALUE))
+        );
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                .addGap(70, 70, 70)
+                .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(329, 329, 329))
+        );
+
+        jLabel3.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jLabel3.setForeground(new java.awt.Color(51, 153, 0));
         jLabel3.setText("Logs:");
+
+        jLabel4.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        jLabel4.setForeground(new java.awt.Color(0, 121, 208));
+        jLabel4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/test/icons8_sun_35px.png"))); // NOI18N
+        jLabel4.setText("Tracker");
+
+        jLabel2.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        jLabel2.setForeground(new java.awt.Color(0, 121, 208));
+        jLabel2.setText("Expense");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(36, 36, 36)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addComponent(amount, javax.swing.GroupLayout.DEFAULT_SIZE, 260, Short.MAX_VALUE)
-                            .addComponent(title, javax.swing.GroupLayout.DEFAULT_SIZE, 260, Short.MAX_VALUE)
-                            .addComponent(status, javax.swing.GroupLayout.DEFAULT_SIZE, 260, Short.MAX_VALUE)
-                            .addComponent(datechooser, javax.swing.GroupLayout.DEFAULT_SIZE, 260, Short.MAX_VALUE)
-                            .addComponent(jLabel3)
-                            .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 951, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 951, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(jScrollPane2)
+                        .addGap(33, 33, 33))
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(302, 302, 302)
-                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(Total, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 169, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(156, 156, 156)
-                        .addComponent(search, javax.swing.GroupLayout.PREFERRED_SIZE, 174, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton2)
-                        .addGap(4, 4, 4)))
-                .addGap(60, 60, 60))
+                        .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 889, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jSeparator1, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
+                                .addGap(12, 12, 12)
+                                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(0, 0, 0)
+                                .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 122, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(0, 0, 0)
+                                .addComponent(Total, javax.swing.GroupLayout.PREFERRED_SIZE, 193, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(search, javax.swing.GroupLayout.PREFERRED_SIZE, 262, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING))
+                        .addGap(38, 38, 38))))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(0, 0, 0)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(search, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(Total, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 481, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 209, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(title, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(4, 4, 4)
-                        .addComponent(amount, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(datechooser, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(status, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(200, 200, 200)
-                        .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(25, Short.MAX_VALUE))
+                        .addGap(11, 11, 11)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(search, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(Total, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(6, 6, 6)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 462, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane2)
+                .addContainerGap())
+            .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addGap(0, 0, 0)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGap(0, 0, 0))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(0, 0, Short.MAX_VALUE)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(0, 0, 0)
+                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGap(0, 0, 0))
         );
 
@@ -420,61 +690,45 @@ public class Main extends javax.swing.JFrame {
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
-    
     private LinkedList list = new LinkedList();
-    private double totalAmount;
+    
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        SimpleDateFormat sdate = new SimpleDateFormat("MMMM dd,yyyy");
+    private void addActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addActionPerformed
+        SimpleDateFormat sdate = new SimpleDateFormat("MMMM dd, yyyy");
         String date3 = sdate.format(datechooser.getDate());
-        
-        Date currentDate = new Date();
-        datechooser.setDate(currentDate);
+       
         if(title.equals("") ||amount.equals("")||date3.isEmpty()){
             JOptionPane.showMessageDialog(this, "Please fill out all the details!");
         }
         else{
-              String date2 = sdate.format(datechooser.getDate());
-            String titleText = title.getText();
-            String amountText = amount.getText();
-            
-             String statusText =status.getText();
+            String date2 = sdate.format(datechooser.getDate());
+            String titleText = title.getText().trim();
+            String amountText = amount.getText().trim();
+            String statusText =status.getText().trim();
         
         DefaultTableModel model1 = (DefaultTableModel) table.getModel();
-        
-         try {
-            double amountValue = Double.parseDouble(amountText);
+           double amountValue = Double.parseDouble(amountText);
            totalAmount += amountValue; 
-        } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this, "Invalid amount format!");
-        }
-         
-         
+
          Total.setText(Double.toString(totalAmount));
-        // Add individual elements to the linked list
-       Record record = new Record(titleText, amountText, date2, statusText);
-       list.add(record);
-        String data[] = {titleText, amountText,date2,statusText};
-        model1.addRow(data);
-        System.out.println("("+"Newly Added Data: "+"Title: "+titleText+", Amount: "+amountText+", Date: "+date2+", Status: "+statusText +")");
+       
+            Record record = new Record(titleText, amountText, date2, statusText);
+            list.add(record);
+            String data[] = {titleText, amountText,date2,statusText};
+            model1.addRow(data);
+            System.out.println("("+"Newly Added Data: "+"Title: "+titleText+", Amount: "+amountText+", Date: "+date2+", Status: "+statusText +")");
         
-            System.out.println("====================================================================================");
+            System.out.println("================================================================================================================");
                          System.out.print("                                 ");       System.out.println("Data OverView");
                                                           list.display();
-            System.out.println("====================================================================================");
+            System.out.println("================================================================================================================");
             
-          
-        
-        title.setText("Title");
-        amount.setText("0.0");
-        
-        
+           title.setText("Title");
+           amount.setText("0.0");
+ 
         JOptionPane.showMessageDialog(this, "Data Add Successfully!");
-        }
-        
-        
-        
-    }//GEN-LAST:event_jButton1ActionPerformed
+        }    
+    }//GEN-LAST:event_addActionPerformed
 
     private void amountKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_amountKeyPressed
        char c = evt.getKeyChar();
@@ -506,8 +760,7 @@ public class Main extends javax.swing.JFrame {
     private void titleFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_titleFocusLost
         if (title.getText().equals("")) {
             title.setText("Title");
-           
-            
+ 
         }
     }//GEN-LAST:event_titleFocusLost
 
@@ -530,30 +783,22 @@ public class Main extends javax.swing.JFrame {
       table.setRowSorter(tablemodel2);
       tablemodel2.setRowFilter(RowFilter.regexFilter(search.getText().trim()));
      
-        DefaultTableModel model = (DefaultTableModel)table.getModel();
-             String searchData = search.getText().trim();
+          DefaultTableModel model = (DefaultTableModel)table.getModel();
+          String searchData = search.getText().trim();
+ 
+       Node foundNode = list.search(searchData);
 
-    
-    Node foundNode = list.search(searchData);
-   
-    
     if (foundNode != null) {
          String titleToFilter = foundNode.data.getTitle().trim();
 
         System.out.println("Found: "+searchData);
         search.setText("");
     } else {
-       
-       
+ 
         System.out.println("Not Found: " + searchData);
          search.setText("");
-     
     }
-      
-            
 
-
-      
       
     }//GEN-LAST:event_jButton2ActionPerformed
 
@@ -573,6 +818,19 @@ public class Main extends javax.swing.JFrame {
 //            search.setText("Search");
 //        }
     }//GEN-LAST:event_searchFocusLost
+
+    private void tableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tableMouseClicked
+//       DefaultTableModel model = (DefaultTableModel) table.getModel();
+//       int i = table.getSelectedRow();
+//        try {
+//            
+//            title.setText(model.getValueAt(i, 0).toString());
+//            amount.setText(model.getValueAt(i, 1).toString());
+//            Date date_pass = new SimpleDateFormat("MMMM dd, yyyy").parse((String)model.getValueAt(i, 2));
+//            status.setText(model.getValueAt(i, 3).toString());
+//        } catch (Exception e) {
+//        }
+    }//GEN-LAST:event_tableMouseClicked
  
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
@@ -607,17 +865,25 @@ public class Main extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JTextField Total;
+    private javax.swing.JLabel Total;
+    private javax.swing.JButton add;
     private javax.swing.JTextField amount;
     private com.toedter.calendar.JDateChooser datechooser;
-    private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel4;
+    private javax.swing.JPanel jPanel5;
+    private javax.swing.JPanel jPanel6;
+    private javax.swing.JPanel jPanel7;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JSeparator jSeparator1;
     private javax.swing.JTextField search;
     private javax.swing.JTextField status;
     private javax.swing.JTable table;
