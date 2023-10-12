@@ -8,8 +8,8 @@
                 <root id="src.dir"/>
             </source-roots>
             <test-roots>
-                <root id="test.jcalendar-1.4.dir"/>
                 <root id="test.src.dir"/>
+                <root id="test.Expense_Tracker.dir"/>
             </test-roots>
         </data>
     </configuration>
